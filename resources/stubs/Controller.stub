@@ -1,0 +1,129 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Response;
+use Illuminate\Http\Request;
+use App\Http\Requests\{{modelName}}Request;
+use App\Services\{{modelName}}Service;
+use App\Http\Responses\ResponseClass;
+
+class {{modelName}}Controller extends Controller
+{
+    protected ${{modelNameSingularLowerCase}}_service;
+    protected $responseClass;
+
+    public function __construct({{modelName}}Service ${{modelNameSingularLowerCase}}_service, ResponseClass $responseClass)
+    {
+        $this->{{modelNameSingularLowerCase}}_service = ${{modelNameSingularLowerCase}}_service;
+        $this->responseClass = $responseClass;
+    }
+
+    private function createSuccessResponse($data, $message)
+    {
+        return $this->responseClass->create()
+            ->status('success')
+            ->message($message)
+            ->data($data)
+            ->build();
+    }
+
+    private function createErrorResponse($errorMessage, $data = null)
+    {
+        return $this->responseClass->create()
+            ->status('error')
+            ->message($errorMessage)
+            ->data($data)
+            ->build();
+    }
+
+    public function index(Request $request)
+    {
+        try {
+            $data = $this->{{modelNameSingularLowerCase}}_service->index($request);
+
+            $response = $this->createSuccessResponse($data['data'] ?? [], 'Resources retrieved successfully');
+
+            return response()->json(['data' => $response], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            $errorResponse = $this->createErrorResponse($e->getMessage(), []);
+
+            return response()->json(['data' => $errorResponse], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function store({{modelName}}Request $request)
+    {
+        try {
+            $data = $this->{{modelNameSingularLowerCase}}_service->store($request);
+
+            $response = $this->createSuccessResponse($data['data'] ?? null, 'Resource created successfully');
+
+            return response()->json(['data' => $response], Response::HTTP_CREATED);
+        } catch (\Exception $e) {
+            $errorResponse = $this->createErrorResponse($e->getMessage(), null);
+
+            return response()->json(['data' => $errorResponse], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $data = $this->{{modelNameSingularLowerCase}}_service->show($id);
+
+            $response = $this->createSuccessResponse($data['data'] ?? null, 'Resource retrieved successfully')
+                ->totalCount($data['totalCount'] ?? 0);
+
+            if (!$data) {
+                return response()->json(['data' => $response], Response::HTTP_NOT_FOUND);
+            }
+
+            return response()->json(['data' => $response], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            $errorResponse = $this->createErrorResponse($e->getMessage(), null);
+
+            return response()->json(['data' => $errorResponse], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function update({{modelName}}Request $request, $id)
+    {
+        try {
+            $data = $this->{{modelNameSingularLowerCase}}_service->update($request, $id);
+
+            if (!$data) {
+                $errorResponse = $this->createErrorResponse('Resource not found', null);
+
+                return response()->json(['data' => $errorResponse], Response::HTTP_NOT_FOUND);
+            }
+
+            $response = $this->createSuccessResponse($data['data'] ?? null, 'Resource updated successfully');
+
+            return response()->json(['data' => $response], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            $errorResponse = $this->createErrorResponse($e->getMessage(), null);
+
+            return response()->json(['data' => $errorResponse], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $result = $this->{{modelNameSingularLowerCase}}_service->destroy($id);
+
+            $response = $this->createSuccessResponse($result['data'] ?? null, 'Resource deleted successfully');
+
+            if (!$result) {
+                return response()->json(['data' => $response], Response::HTTP_NOT_FOUND);
+            }
+
+            return response()->json(['data' => $response], Response::HTTP_NO_CONTENT);
+        } catch (\Exception $e) {
+            $errorResponse = $this->createErrorResponse($e->getMessage(), null);
+
+            return response()->json(['data' => $errorResponse], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+}
