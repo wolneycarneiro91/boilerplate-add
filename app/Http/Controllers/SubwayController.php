@@ -4,24 +4,24 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
-use App\Http\Requests\{{classe}}Request;
-use App\Services\{{classe}}Service;
+use App\Http\Requests\SubwayRequest;
+use App\Services\SubwayService;
 use App\Traits\ApiResponseTrait;
 
-class {{classe}}Controller extends Controller
+class SubwayController extends Controller
 {
     use ApiResponseTrait;
-    protected ${{singularminusculaclasse}}Service;
+    protected $subwayService;
     protected $responseClass;
 
-    public function __construct({{classe}}Service ${{singularminusculaclasse}}Service)
+    public function __construct(SubwayService $subwayService)
     {
-        $this->{{singularminusculaclasse}}Service = ${{singularminusculaclasse}}Service;
+        $this->subwayService = $subwayService;
     }
     public function index(Request $request)
     {
         try {
-            $data = $this->{{singularminusculaclasse}}Service->index($request);
+            $data = $this->subwayService->index($request);
             $response = $this->createSuccessResponse($data ?? null, 'Resources retrieved successfully');
             return response()->json($response, Response::HTTP_OK);
         } catch (\Exception $e) {
@@ -33,7 +33,7 @@ class {{classe}}Controller extends Controller
     public function show($token)
     {
         try {
-            $data = $this->{{singularminusculaclasse}}Service->show($token);
+            $data = $this->subwayService->show($token);
             $response = $this->createSuccessResponse($data ?? null, 'Resource retrieved successfully');
             if (!$data) {
                 return response()->json($response, Response::HTTP_NOT_FOUND);
@@ -50,7 +50,7 @@ class {{classe}}Controller extends Controller
     public function store(Request $request)
     {
         try {
-            $data = $this->{{singularminusculaclasse}}Service->store($request);
+            $data = $this->subwayService->store($request);
             $response = $this->createSuccessResponse($data ?? null, 'Resource created successfully');
             return response()->json($response, Response::HTTP_CREATED);
         } catch (\Exception $e) {
@@ -66,7 +66,7 @@ class {{classe}}Controller extends Controller
     public function update(Request $request, $token)
     {
         try {
-            $data = $this->{{singularminusculaclasse}}Service->update($request, $token);
+            $data = $this->subwayService->update($request, $token);
 
             if (!$data) {
                 $errorResponse = $this->createErrorResponse('Resource not found', null);
@@ -87,7 +87,7 @@ class {{classe}}Controller extends Controller
     public function destroy($token)
     {
         try {
-            $result = $this->{{singularminusculaclasse}}Service->destroy($token);
+            $result = $this->subwayService->destroy($token);
 
             $response = $this->createSuccessResponse($result ?? null, 'Resource deleted successfully');
 

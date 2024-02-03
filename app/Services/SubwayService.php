@@ -2,30 +2,29 @@
 
 namespace App\Services;
 
-use App\Models\Address;
-use Exception;
+use App\Models\Subway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class AddressService
+class SubwayService
 {
-    protected $address;
+    protected $subway;
 
-    public function __construct(Address $address)
+    public function __construct(Subway $subway)
     {
-        $this->address = $address;
+        $this->subway = $subway;
     }
     public function show(string $token): array
     {
-        $find = $this->address->select('address', 'latitude', 'longitude', 'token')->where('token', $token)->firstOrFail();
+        $find = $this->subway->select("address_id","name")->where('token', $token)->firstOrFail();
 
         return ['data' => ['items' => $find->toArray(), 'totalCount' => 1]];
     }
     public function index(): array
     {
         $data = [
-            'items' => $this->address->select("address", "latitude", "longitude", "token")->get(),
-            'totalCount' => $this->address->count(),
+            'items' => $this->subway->select("address_id","name")->get(),
+            'totalCount' => $this->subway->count(),
         ];
 
         return [$data];
@@ -36,13 +35,13 @@ class AddressService
         $dataFrom = $request->all();
         $dataFrom['token'] = Str::uuid()->toString();
 
-            $data = $this->address->create($dataFrom);
+            $data = $this->subway->create($dataFrom);
         return ['data' => $data->toArray()];
     }
     public function update(Request $request, string $token): array
     {
 
-        $data = $this->address->where('token', $token)->firstOrFail();
+        $data = $this->subway->where('token', $token)->firstOrFail();
         $dataFrom = $request->all();
         $data->update($dataFrom);
 
@@ -50,7 +49,7 @@ class AddressService
     }
     public function destroy(string $token): void
     {
-        $data = $this->address->where('token', $token)->firstOrFail();
+        $data = $this->subway->where('token', $token)->firstOrFail();
         $data->delete();
     }
 }

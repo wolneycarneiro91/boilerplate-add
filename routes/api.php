@@ -32,3 +32,29 @@ Route::prefix('auth')->group(function () {
  
  Route::apiResource('addresses',App\Http\Controllers\AddressController::class)->parameters([
     'token' => 'token']);
+ 
+
+ 
+ Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class);
+ 
+ Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class)->middleware(['transaction']);
+ 
+ Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class)->middleware(['transaction']);
+ 
+ Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class)->middleware(['transaction']);
+ 
+ Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class)->middleware(['transaction']);
+ 
+ Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class)->middleware(['transaction']);
+ 
+ Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class)->middleware(['transaction']);
+ 
+ Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class)->middleware(['transaction']);
+ 
+ Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class)->middleware(['transaction']);
+ 
+ Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class)->middleware(['transaction']);
+ 
+ Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class)->middleware(['transaction']);
+ 
+ Route::apiResource('subways',App\Http\Controllers\SubwayController::class)->middleware(['transaction']);
