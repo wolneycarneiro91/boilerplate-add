@@ -83,9 +83,7 @@ class GeneratorLayerCommand extends Command
     {
         $modelTemplate = str_replace(
             ['{{modelName}}'],
-            '{{singularminusculaclasse}}'
             [$name],
-            strtolower(Str::snake($name)),
             $this->getStub('Model')
         );
         $fields = '"' . implode('","', $fields) . '"';

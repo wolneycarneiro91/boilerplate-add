@@ -58,3 +58,5 @@ Route::prefix('auth')->group(function () {
  Route::apiResource('transacaos',App\Http\Controllers\TransacaoController::class)->middleware(['transaction']);
  
  Route::apiResource('subways',App\Http\Controllers\SubwayController::class)->middleware(['transaction']);
+ 
+ Route::apiResource('subwaylines',App\Http\Controllers\SubwayLinesController::class)->middleware(['transaction']);

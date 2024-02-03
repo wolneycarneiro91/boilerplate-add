@@ -2,29 +2,29 @@
 
 namespace App\Services;
 
-use App\Models\Subway;
+use App\Models\SubwayLines;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class SubwayService
+class SubwayLinesService
 {
-    protected $subway;
+    protected $subwaylines;
 
-    public function __construct(Subway $subway)
+    public function __construct(SubwayLines $subwaylines)
     {
-        $this->subway = $subway;
+        $this->subwaylines = $subwaylines;
     }
     public function show(string $token): array
     {
-        $find = $this->subway->select("address_id","name")->where('token', $token)->firstOrFail();
+        $find = $this->subwaylines->select("name")->where('token', $token)->firstOrFail();
 
         return ['data' => ['items' => $find->toArray(), 'totalCount' => 1]];
     }
     public function index(): array
     {
         $data = [
-            'items' => $this->subway->select("address_id","name","token","subwayline_id")->with(['subwayline','address'])->get(),
-            'totalCount' => $this->subway->count(),
+            'items' => $this->subwaylines->select("name","token")->get(),
+            'totalCount' => $this->subwaylines->count(),
         ];
 
         return [$data];
@@ -35,13 +35,13 @@ class SubwayService
         $dataFrom = $request->all();
         $dataFrom['token'] = Str::uuid()->toString();
 
-            $data = $this->subway->create($dataFrom);
+            $data = $this->subwaylines->create($dataFrom);
         return ['data' => $data->toArray()];
     }
     public function update(Request $request, string $token): array
     {
 
-        $data = $this->subway->where('token', $token)->firstOrFail();
+        $data = $this->subwaylines->where('token', $token)->firstOrFail();
         $dataFrom = $request->all();
         $data->update($dataFrom);
 
@@ -49,7 +49,7 @@ class SubwayService
     }
     public function destroy(string $token): void
     {
-        $data = $this->subway->where('token', $token)->firstOrFail();
+        $data = $this->subwaylines->where('token', $token)->firstOrFail();
         $data->delete();
     }
 }
