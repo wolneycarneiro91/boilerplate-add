@@ -2,56 +2,54 @@
 
 namespace App\Services;
 
-use App\Models\{{modelName}};
+use App\Models\{{classe}};
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
-class {{modelName}}Service
+class {{classe}}Service
 {
-    protected ${{modelNameSingularLowerCase}};
+    protected ${{singularminusculaclasse}};
 
-    public function __construct({{modelName}} ${{modelNameSingularLowerCase}})
+    public function __construct({{classe}} ${{singularminusculaclasse}})
     {
-        $this->{{modelNameSingularLowerCase}} = ${{modelNameSingularLowerCase}};
+        $this->{{singularminusculaclasse}} = ${{singularminusculaclasse}};
+    }
+    public function show(string $token): array
+    {
+        $find = $this->{{singularminusculaclasse}}->select({{fillable}})->where('token', $token)->firstOrFail();
+
+        return ['data' => ['items' => $find->toArray(), 'totalCount' => 1]];
+    }
+    public function index(): array
+    {
+        $data = [
+            'items' => $this->{{singularminusculaclasse}}->select({{fillable}})->get(),
+            'totalCount' => $this->{{singularminusculaclasse}}->count(),
+        ];
+
+        return [$data];
     }
 
-    public function index($request)
-    {
-        if ($request->filled('limit')) {
-            if ($request->limit == '-1') {
-                $data = $this->{{modelNameSingularLowerCase}}->get();
-            } else {
-                $data = $this->{{modelNameSingularLowerCase}}->paginate(config('app.pageLimit'));
-            }
-        } else {
-            $data = $this->{{modelNameSingularLowerCase}}->paginate(config('app.pageLimit'));
-        }
-
-        return $data;
-    }
-
-    public function store($request)
+    public function store(Request $request): array
     {
         $dataFrom = $request->all();
-        $data = $this->{{modelNameSingularLowerCase}}->create($dataFrom);
-        return $data;
-    }
+        $dataFrom['token'] = Str::uuid()->toString();
 
-    public function show($id)
-    {
-        $data = $this->{{modelNameSingularLowerCase}}->find($id);
-        return $data;
+            $data = $this->{{singularminusculaclasse}}->create($dataFrom);
+        return ['data' => $data->toArray()];
     }
-
-    public function update($request, $id)
+    public function update(Request $request, string $token): array
     {
-        $data = $this->{{modelNameSingularLowerCase}}->find($id);
+
+        $data = $this->{{singularminusculaclasse}}->where('token', $token)->firstOrFail();
         $dataFrom = $request->all();
         $data->update($dataFrom);
-        return $data;
-    }
 
-    public function destroy($id)
+        return ['data' => $dataFrom];
+    }
+    public function destroy(string $token): void
     {
-        $data = $this->{{modelNameSingularLowerCase}}->find($id);
+        $data = $this->{{singularminusculaclasse}}->where('token', $token)->firstOrFail();
         $data->delete();
     }
 }

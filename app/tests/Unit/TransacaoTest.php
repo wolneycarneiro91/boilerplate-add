@@ -2,38 +2,34 @@
 
 namespace Tests\Unit\Services;
 
-use App\Models\Address;
+use App\Models\Transacao;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Http\Request;
 
-class AddressServiceTest extends TestCase
+class TransacaoServiceTest extends TestCase
 {
     use RefreshDatabase;
     use WithFaker;
 
-    protected $addressService;
+    protected $transacaoService;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->addressService = app(\App\Services\AddressService::class);
+        $this->transacaoService = app(\App\Services\TransacaoService::class);
     }
 
     public function testShowMethodReturnsCorrectData()
     {
         $fakeToken = $this->faker->uuid;
-        $fakeAddress = Address::factory()->create(['token' => $fakeToken]);
+        $fakeTransacao = Transacao::factory()->create(['token' => $fakeToken]);
 
-        $result = $this->addressService->show($fakeToken);
+        $result = $this->transacaoService->show($fakeToken);
 
         $expectedData = [
-            'address' => $fakeAddress->address,
-            'latitude' => (string) $fakeAddress->latitude,
-            'longitude' => (string) $fakeAddress->longitude,
-            'token' => $fakeAddress->token,
         ];
 
         $this->assertEquals([
@@ -47,16 +43,16 @@ class AddressServiceTest extends TestCase
     public function testIndexMethodReturnsCorrectData()
     {
 
-        $fakeAddresses = Address::factory(3)->create();
+        $fakeTransacaoes = Transacao::factory(3)->create();
 
-        $result = $this->addressService->index();
+        $result = $this->transacaoService->index();
 
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $result['data']['items']);
 
         $this->assertCount(3, $result['data']['items']);
 
         foreach ($result['data']['items'] as $item) {
-            $this->assertInstanceOf(Address::class, $item);
+            $this->assertInstanceOf(Transacao::class, $item);
         }
 
         $this->assertEquals(3, $result['data']['totalCount']);
@@ -64,43 +60,37 @@ class AddressServiceTest extends TestCase
 
 
 
-    public function testStoreMethodCreatesNewAddress()
+    public function testStoreMethodCreatesNewTransacao()
     {
         $fakeStoreData = [
-            'address' => $this->faker->address,
-            'latitude' => $this->faker->latitude,
-            'longitude' => $this->faker->longitude,
         ];
         $fakeRequest = new Request($fakeStoreData);
-        $result = $this->addressService->store($fakeRequest);
+        $result = $this->transacaoService->store($fakeRequest);
         $this->assertArrayHasKey('data', $result);
         $this->assertIsArray($result['data']);
     }
 
 
-    public function testUpdateMethodUpdatesAddress()
+    public function testUpdateMethodUpdatesTransacao()
     {
         $fakeToken = $this->faker->uuid;
-        $fakeAddress = \App\Models\Address::factory()->create(['token' => $fakeToken]);
+        $fakeTransacao = \App\Models\Transacao::factory()->create(['token' => $fakeToken]);
 
         $fakeUpdateData = [
-            'address' => $this->faker->address,
-            'latitude' => $this->faker->latitude,
-            'longitude' => $this->faker->longitude,
         ];
         $fakeRequest = new Request($fakeUpdateData);
-        $result = $this->addressService->update($fakeRequest, $fakeToken);
+        $result = $this->transacaoService->update($fakeRequest, $fakeToken);
 
         $this->assertDatabaseHas('address', $fakeUpdateData);
         $this->assertEquals(['data' => $fakeUpdateData], $result);
     }
 
-    public function testDestroyMethodDeletesAddress()
+    public function testDestroyMethodDeletesTransacao()
     {
         $fakeToken = $this->faker->uuid;
-        $fakeAddress = Address::factory()->create(['token' => $fakeToken]);
+        $fakeTransacao = Transacao::factory()->create(['token' => $fakeToken]);
 
-        $this->addressService->destroy($fakeToken);
+        $this->transacaoService->destroy($fakeToken);
 
         $this->assertDatabaseMissing('address', ['token' => $fakeToken]);
     }

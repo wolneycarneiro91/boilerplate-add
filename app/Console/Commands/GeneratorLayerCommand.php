@@ -25,7 +25,8 @@ class GeneratorLayerCommand extends Command
         $name = $this->argument('name');        
         $fields = $this->option('fields');
         $this->controller($name);
-        $this->service($name);        
+        $this->service($name,$fields); 
+        $this->testService($name,$fields);        
         $this->model($name, $fields);
         $this->request($name);
         $nameController = $name . "Controller";
@@ -37,9 +38,9 @@ class GeneratorLayerCommand extends Command
     {
         $controllerTemplate = str_replace(
             [
-                '{{modelName}}',
-                '{{modelNamePluralLowerCase}}',
-                '{{modelNameSingularLowerCase}}'
+                '{{classe}}',
+                '{{pluralminusculaclasse}}',
+                '{{singularminusculaclasse}}'        
             ],
             [
                 $name,
@@ -51,13 +52,14 @@ class GeneratorLayerCommand extends Command
 
         file_put_contents(app_path("/Http/Controllers/{$name}Controller.php"), $controllerTemplate);
     }
-    protected function service($name)
+    protected function service($name,$fields)
     {
+        $fields = '"' . implode('","', $fields) . '"';
         $serviceTemplate = str_replace(
             [
-                '{{modelName}}',
-                '{{modelNamePluralLowerCase}}',
-                '{{modelNameSingularLowerCase}}'
+                '{{classe}}',
+                '{{pluralminusculaclasse}}',
+                '{{singularminusculaclasse}}'                               
             ],
             [
                 $name,
@@ -66,6 +68,11 @@ class GeneratorLayerCommand extends Command
             ],
             $this->getStub('Service')
         );
+        $serviceTemplate = str_replace(
+            ['{{fillable}}'],
+            [$fields],
+            $serviceTemplate
+        );        
         if (!file_exists($path = app_path('/Services'))) {
             mkdir($path, 0775, true);
         }
@@ -76,7 +83,9 @@ class GeneratorLayerCommand extends Command
     {
         $modelTemplate = str_replace(
             ['{{modelName}}'],
+            '{{singularminusculaclasse}}'
             [$name],
+            strtolower(Str::snake($name)),
             $this->getStub('Model')
         );
         $fields = '"' . implode('","', $fields) . '"';
@@ -102,6 +111,34 @@ class GeneratorLayerCommand extends Command
 
         file_put_contents(app_path("/Http/Requests/{$name}Request.php"), $requestTemplate);
     }
+
+    protected function testService($name,$fields)
+    {
+        $fields = '"' . implode('","', $fields) . '"';
+        $serviceTestTemplate = str_replace(
+            [
+                '{{classe}}',
+                '{{pluralminusculaclasse}}',
+                '{{singularminusculaclasse}}'                               
+            ],
+            [
+                $name,
+                strtolower(Str::plural($name)),
+                strtolower($name)
+            ],
+            $this->getStub('Test')
+        );
+        $serviceTestTemplate = str_replace(
+            ['{{fillable}}'],
+            [$fields],
+            $serviceTestTemplate
+        );        
+        if (!file_exists($path = app_path('./tests/Unit'))) {
+            mkdir($path, 0775, true);
+        }
+       
+        file_put_contents(base_path("tests/Unit/{$name}Test.php"), $serviceTestTemplate);
+    }    
 
 
     protected function getStub($type)
