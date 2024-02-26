@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subway', function (Blueprint $table) {
-            $table->id();
-            $table->integer('address_id');
-            $table->string('name');
-            $table->string('token', 36);
-            $table->timestamps();
+        Schema::table('subway', function (Blueprint $table) {
+            $table->unsignedBigInteger('subwayline_id'); 
+            $table->foreign('subwayline_id')->references('id')->on('subwaylines'); 
         });
     }
 
@@ -25,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subway');
+        Schema::table('subway', function (Blueprint $table) {
+            Schema::dropColumn('subwayline_id');
+        });
     }
 };

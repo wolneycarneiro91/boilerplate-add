@@ -15,7 +15,7 @@ class Address extends Model
   
     public function setAddressAttribute($value)
     {
-        $this->attributes['address'] =  $this->validarDado('address',$value, request());
+        $this->attributes['address'] =   $value;
     }
 
     public function setLatitudeAttribute($value)

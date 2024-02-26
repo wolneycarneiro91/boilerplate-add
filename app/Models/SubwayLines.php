@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class {{modelName}} extends Model
+class SubwayLines extends Model
 {         
     protected $guarded = ['id'];
-    protected $table = strtolower('{{modelName}}');
-    protected $fillable = [{{fillable}}];
+    protected $table = 'subwaylines';
+    protected $fillable = ["name","token"];
 }
